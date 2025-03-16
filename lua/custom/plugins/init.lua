@@ -14,7 +14,8 @@ return {
     enabled = true,
     config = function()
       require('minuet').setup {
-        provider = 'openai_fim_compatible',
+        enabled = true,
+        provider = 'gemini',
         n_completions = 1, -- recommend for local model for resource saving
         -- I recommend beginning with a small context window size and incrementally
         -- expanding it, depending on your local computing power. A context window
