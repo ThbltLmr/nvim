@@ -67,10 +67,10 @@ return {
     opts = {
       strategies = {
         chat = {
-          adapter = 'ollama',
+          adapter = 'gemini',
         },
         inline = {
-          adapter = 'ollama',
+          adapter = 'gemini',
         },
       },
       dependencies = {
