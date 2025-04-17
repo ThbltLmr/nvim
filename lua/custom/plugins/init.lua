@@ -111,6 +111,7 @@ return {
                 end,
                 opts = {
                   contains_code = true,
+                  auto_submit = true,
                 },
               },
             },
