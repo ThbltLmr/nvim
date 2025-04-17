@@ -76,7 +76,7 @@ return {
       prompt_library = {
         ['YOLO commit'] = {
           strategy = 'workflow',
-          description = 'Git add all then commit without asking for confirmation',
+          description = 'Commits all changes with generated message',
           opts = {
             auto_submit = true,
           },
