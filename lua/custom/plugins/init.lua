@@ -73,6 +73,50 @@ return {
           adapter = 'gemini',
         },
       },
+      prompt_library = {
+        ['YOLO commit'] = {
+          strategy = 'workflow',
+          description = 'Git add all then commit without asking for confirmation',
+          opts = {
+            auto_submit = true,
+          },
+          prompts = {
+            {
+              {
+                role = 'user',
+                content = function()
+                  vim.g.codecompanion_auto_tool_mode = true
+                  vim.fn.system 'git add .'
+                  return string.format(
+                    [[@cmd_runner You are an expert at following the Conventional Commit specification. Given the git diff listed below, please generate a commit message for me:
+
+```diff
+%s
+```
+]],
+                    vim.fn.system 'git diff --no-ext-diff --staged'
+                  )
+                end,
+                opts = {
+                  contains_code = true,
+                  auto_submit = true,
+                },
+              },
+            },
+            {
+              {
+                role = 'user',
+                content = function()
+                  return string.format [[@cmd_runner commit with the generated message]]
+                end,
+                opts = {
+                  contains_code = true,
+                },
+              },
+            },
+          },
+        },
+      },
       dependencies = {
         'nvim-lua/plenary.nvim',
         'nvim-treesitter/nvim-treesitter',
