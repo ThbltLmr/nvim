@@ -11,7 +11,7 @@ return {
   },
   {
     'milanglacier/minuet-ai.nvim',
-    enabled = true,
+    enabled = false,
     config = function()
       require('minuet').setup {
         enabled = true,
@@ -140,5 +140,9 @@ return {
     lazy = false,
     dependencies = { 'MunifTanjim/nui.nvim' },
     opts = {},
+  },
+  {
+    'github/copilot.vim',
+    lazy = false,
   },
 }
