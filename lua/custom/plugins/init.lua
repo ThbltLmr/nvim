@@ -25,6 +25,7 @@ return {
         context_window = 512,
         provider_options = {
           gemini = {
+            enabled = false,
             model = 'gemini-2.0-flash',
             stream = true,
             api_key = 'GEMINI_API_KEY',
