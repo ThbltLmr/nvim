@@ -9,6 +9,7 @@ return {
     opts = {},
     cmd = { 'Typr', 'TyprStats' },
   },
+  { 'catppuccin/nvim', name = 'catppuccin', priority = 1000 },
   {
     'milanglacier/minuet-ai.nvim',
     enabled = false,
