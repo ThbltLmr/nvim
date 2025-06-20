@@ -17,6 +17,7 @@ return {
     opts = {},
   },
   {
+    enabled = false,
     'github/copilot.vim',
     lazy = false,
   },
