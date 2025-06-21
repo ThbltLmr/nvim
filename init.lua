@@ -594,13 +594,13 @@ require('lazy').setup({
 
       -- Change diagnostic symbols in the sign column (gutter)
       if vim.g.have_nerd_font then
-         local signs = { ERROR = '', WARN = '', INFO = '', HINT = '' }
-         local diagnostic_signs = {}
-         for type, icon in pairs(signs) do
-           diagnostic_signs[vim.diagnostic.severity[type]] = icon
-         end
-         vim.diagnostic.config { signs = { text = diagnostic_signs } }
-       end
+        local signs = { ERROR = '', WARN = '', INFO = '', HINT = '' }
+        local diagnostic_signs = {}
+        for type, icon in pairs(signs) do
+          diagnostic_signs[vim.diagnostic.severity[type]] = icon
+        end
+        vim.diagnostic.config { signs = { text = diagnostic_signs } }
+      end
 
       -- LSP servers and clients are able to communicate to each other what features they support.
       --  By default, Neovim doesn't support everything that is in the LSP specification.
@@ -988,3 +988,34 @@ vim.keymap.set('i', '<C-Esc>', '<Plug>(copilot-dismiss)')
 -- vim: ts=2 sts=2 sw=2 et
 --
 --ku:
+
+local harpoon = require 'harpoon'
+harpoon:setup {}
+
+vim.keymap.set('n', '<leader>h', function()
+  harpoon.ui:toggle_quick_menu(harpoon:list())
+end)
+
+vim.keymap.set('n', '<leader>a', function()
+  harpoon:list():add()
+end)
+vim.keymap.set('n', '<leader>1', function()
+  harpoon:list():select(1)
+end)
+vim.keymap.set('n', '<leader>2', function()
+  harpoon:list():select(2)
+end)
+vim.keymap.set('n', '<leader>3', function()
+  harpoon:list():select(3)
+end)
+vim.keymap.set('n', '<leader>4', function()
+  harpoon:list():select(4)
+end)
+
+-- Toggle previous & next buffers stored within Harpoon list
+vim.keymap.set('n', '<C-S-P>', function()
+  harpoon:list():prev()
+end)
+vim.keymap.set('n', '<C-S-N>', function()
+  harpoon:list():next()
+end)
