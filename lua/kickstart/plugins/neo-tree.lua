@@ -9,7 +9,7 @@ return {
     'nvim-tree/nvim-web-devicons', -- not strictly required, but recommended
     'MunifTanjim/nui.nvim',
   },
-  cmd = 'Neotree',
+  lazy = false,
   keys = {
     { '\\', ':Neotree reveal right<CR>', desc = 'NeoTree reveal right', silent = true },
   },
