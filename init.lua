@@ -1016,7 +1016,18 @@ vim.keymap.set({ 'n', 'v' }, '<leader>ct', '<cmd>CodeCompanionChat Toggle<cr>', 
 vim.keymap.set({ 'n', 'v' }, '<leader>cq', '<cmd>CodeCompanionActions<cr>', { noremap = true, silent = true })
 vim.cmd [[cab cc CodeCompanion]]
 
-vim.keymap.set('i', '<C-Esc>', '<Plug>(copilot-dismiss)')
+vim.keymap.set('i', '<Esc>', function()
+  local luasnip = require 'luasnip'
+  local suggestion = require 'supermaven-nvim.completion_preview'
+
+  if luasnip.expandable() then
+    luasnip.expand()
+  elseif suggestion.has_suggestion() then
+    suggestion.on_dispose_inlay()
+  else
+    return '<Esc>'
+  end
+end, { expr = true, noremap = true, silent = true })
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
 --
