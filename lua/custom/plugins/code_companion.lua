@@ -2,6 +2,7 @@ return {
   {
     'olimorris/codecompanion.nvim',
     config = true,
+    enabled = false,
     opts = {
       strategies = {
         chat = {
