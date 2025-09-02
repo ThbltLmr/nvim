@@ -1063,3 +1063,5 @@ end)
 vim.keymap.set('n', '<C-S-N>', function()
   harpoon:list():next()
 end)
+
+vim.keymap.set({ 'n', 'v' }, '<leader>gb', '<cmd>BlamerToggle<cr>', { noremap = true, silent = true })
