@@ -33,4 +33,14 @@ return {
       }
     end,
   },
+  {
+    'psjay/blamer.nvim',
+    config = function()
+      require('blamer').setup {
+        date_format = '%Y-%m-%d %H:%M',
+        window_width = 80,
+        show_summary = true,
+      }
+    end,
+  },
 }
