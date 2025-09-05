@@ -219,6 +219,15 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
+-- PHP-specific abbreviations
+vim.api.nvim_create_autocmd('FileType', {
+  desc = 'PHP-specific abbreviations',
+  pattern = 'php',
+  callback = function()
+    vim.keymap.set('i', '..', '->', { buffer = true })
+  end,
+})
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
