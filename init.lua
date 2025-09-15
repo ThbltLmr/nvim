@@ -1075,3 +1075,5 @@ vim.keymap.set('n', '<C-S-N>', function()
 end)
 
 vim.keymap.set({ 'n', 'v' }, '<leader>gb', '<cmd>BlamerToggle<cr>', { noremap = true, silent = true })
+
+vim.g.mkdp_browser = ''
