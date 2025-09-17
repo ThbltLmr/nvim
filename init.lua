@@ -756,7 +756,7 @@ require('lazy').setup({
       {
         '<leader>f',
         function()
-          require('conform').format { async = true, lsp_format = 'fallback' }
+          require('conform').format { async = true, lsp_format = 'never' }
         end,
         mode = '',
         desc = '[F]ormat buffer',
@@ -774,7 +774,7 @@ require('lazy').setup({
         else
           return {
             timeout_ms = 500,
-            lsp_format = 'fallback',
+            lsp_format = 'never',
           }
         end
       end,
@@ -784,7 +784,10 @@ require('lazy').setup({
         -- python = { "isort", "black" },
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
-        -- javascript = { "prettierd", "prettier", stop_after_first = true },
+        javascript = { 'eslint_d', stop_after_first = true },
+        typescript = { 'eslint_d', stop_after_first = true },
+        javascriptreact = { 'eslint_d', stop_after_first = true },
+        typescriptreact = { 'eslint_d', stop_after_first = true },
       },
     },
   },
