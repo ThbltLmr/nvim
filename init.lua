@@ -756,7 +756,7 @@ require('lazy').setup({
       {
         '<leader>f',
         function()
-          require('conform').format { async = true, lsp_format = 'never' }
+          require('conform').format { async = true, lsp_format = 'fallback' }
         end,
         mode = '',
         desc = '[F]ormat buffer',
@@ -784,6 +784,7 @@ require('lazy').setup({
         -- python = { "isort", "black" },
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
+        php = { 'php_cs_fixer', stop_after_first = true },
         javascript = { 'eslint_d', stop_after_first = true },
         typescript = { 'eslint_d', stop_after_first = true },
         javascriptreact = { 'eslint_d', stop_after_first = true },
