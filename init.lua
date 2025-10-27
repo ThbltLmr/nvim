@@ -1080,4 +1080,7 @@ end)
 
 vim.keymap.set({ 'n', 'v' }, '<leader>gb', '<cmd>BlamerToggle<cr>', { noremap = true, silent = true })
 
+vim.keymap.set('n', '<leader>yp', ':let @+ = expand("%:f")<CR>', { desc = 'Yank relative path' })
+vim.keymap.set('n', '<leader>yP', ':let @+ = expand("%:p")<CR>', { desc = 'Yank absolute path' })
+
 vim.g.mkdp_browser = ''
