@@ -774,7 +774,7 @@ require('lazy').setup({
         else
           return {
             timeout_ms = 500,
-            lsp_format = 'never',
+            lsp_format = 'first',
           }
         end
       end,
@@ -785,10 +785,10 @@ require('lazy').setup({
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
         php = { 'php_cs_fixer', stop_after_first = true },
-        javascript = { 'eslint_d', stop_after_first = true },
-        typescript = { 'eslint_d', stop_after_first = true },
-        javascriptreact = { 'eslint_d', stop_after_first = true },
-        typescriptreact = { 'eslint_d', stop_after_first = true },
+        javascript = { 'eslint_d' },
+        typescript = { 'eslint_d' },
+        javascriptreact = { 'eslint_d' },
+        typescriptreact = { 'eslint_d' },
       },
     },
   },
