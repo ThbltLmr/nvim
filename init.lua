@@ -694,6 +694,7 @@ require('lazy').setup({
         ts_ls = {},
         cssls = {},
         phpactor = {},
+        prismals = {},
         --
 
         lua_ls = {
@@ -756,7 +757,7 @@ require('lazy').setup({
       {
         '<leader>f',
         function()
-          require('conform').format { async = true, lsp_format = 'fallback' }
+          require('conform').format { async = true, lsp_format = 'never' }
         end,
         mode = '',
         desc = '[F]ormat buffer',
@@ -774,7 +775,7 @@ require('lazy').setup({
         else
           return {
             timeout_ms = 500,
-            lsp_format = 'first',
+            lsp_format = 'fallback',
           }
         end
       end,
@@ -789,6 +790,7 @@ require('lazy').setup({
         typescript = { 'eslint_d' },
         javascriptreact = { 'eslint_d' },
         typescriptreact = { 'eslint_d' },
+        json = { 'eslint_d' },
       },
     },
   },
