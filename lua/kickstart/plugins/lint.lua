@@ -56,6 +56,17 @@ return {
           -- avoid superfluous noise, notably within the handy LSP pop-ups that
           -- describe the hovered symbol using Markdown.
           if vim.bo.modifiable then
+            -- Find the nearest package.json for monorepo support
+            local root = vim.fs.find({ 'package.json' }, {
+              upward = true,
+              path = vim.api.nvim_buf_get_name(0),
+            })[1]
+
+            if root then
+              -- Set cwd to the directory containing package.json
+              lint.linters.eslint_d.cwd = vim.fn.fnamemodify(root, ':h')
+            end
+
             lint.try_lint()
           end
         end,

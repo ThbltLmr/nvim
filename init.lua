@@ -792,6 +792,18 @@ require('lazy').setup({
         typescriptreact = { 'eslint_d' },
         json = { 'eslint_d' },
       },
+      formatters = {
+        eslint_d = {
+          -- Find the nearest package.json to determine the correct workspace
+          cwd = function(self, ctx)
+            local root = vim.fs.find({ 'package.json' }, {
+              upward = true,
+              path = ctx.filename,
+            })[1]
+            return root and vim.fn.fnamemodify(root, ':h') or vim.fn.getcwd()
+          end,
+        },
+      },
     },
   },
 
