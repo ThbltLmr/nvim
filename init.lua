@@ -786,14 +786,24 @@ require('lazy').setup({
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
         php = { 'php_cs_fixer', stop_after_first = true },
-        javascript = { 'eslint_d' },
-        typescript = { 'eslint_d' },
-        javascriptreact = { 'eslint_d' },
-        typescriptreact = { 'eslint_d' },
+        javascript = { 'biome', 'biome-organize-imports' },
+        typescript = { 'biome', 'biome-organize-imports' },
+        javascriptreact = { 'biome', 'biome-organize-imports' },
+        typescriptreact = { 'biome', 'biome-organize-imports' },
         json = { 'eslint_d' },
       },
       formatters = {
         eslint_d = {
+          -- Find the nearest package.json to determine the correct workspace
+          cwd = function(self, ctx)
+            local root = vim.fs.find({ 'package.json' }, {
+              upward = true,
+              path = ctx.filename,
+            })[1]
+            return root and vim.fn.fnamemodify(root, ':h') or vim.fn.getcwd()
+          end,
+        },
+        biome = {
           -- Find the nearest package.json to determine the correct workspace
           cwd = function(self, ctx)
             local root = vim.fs.find({ 'package.json' }, {
