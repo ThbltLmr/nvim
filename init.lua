@@ -1103,6 +1103,7 @@ vim.keymap.set('n', '<C-S-N>', function()
 end)
 
 vim.keymap.set({ 'n', 'v' }, '<leader>gb', '<cmd>BlamerToggle<cr>', { noremap = true, silent = true })
+vim.keymap.set({ 'n', 'v' }, '<leader>st', '<cmd>SupermavenToggle<cr>', { noremap = true, silent = true })
 
 vim.keymap.set('n', '<leader>yp', ':let @+ = expand("%:f")<CR>', { desc = 'Yank relative path' })
 vim.keymap.set('n', '<leader>yP', ':let @+ = expand("%:p")<CR>', { desc = 'Yank absolute path' })
