@@ -1042,10 +1042,6 @@ require('lazy').setup({
   },
 })
 
--- Expand 'cc' into 'CodeCompanion' in the command line
-vim.keymap.set({ 'n', 'v' }, '<leader>ct', '<cmd>CodeCompanionChat Toggle<cr>', { noremap = true, silent = true })
-vim.keymap.set({ 'n', 'v' }, '<leader>cq', '<cmd>CodeCompanionActions<cr>', { noremap = true, silent = true })
-vim.cmd [[cab cc CodeCompanion]]
 
 
 -- The line beneath this is called `modeline`. See `:help modeline`
