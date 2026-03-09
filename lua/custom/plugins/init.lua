@@ -9,6 +9,11 @@ return {
     opts = {},
     cmd = { 'Typr', 'TyprStats' },
   },
+  {
+    'windwp/nvim-ts-autotag',
+    event = 'InsertEnter',
+    opts = {},
+  },
   { 'catppuccin/nvim', name = 'catppuccin', priority = 1000 },
   {
     'm4xshen/hardtime.nvim',
