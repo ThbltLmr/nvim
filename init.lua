@@ -290,6 +290,7 @@ require('lazy').setup({
         topdelete = { text = '‾' },
         changedelete = { text = '~' },
       },
+      current_line_blame_formatter = '<author>, <author_time:%Y-%m-%d %H:%M> - <summary>',
     },
   },
 
@@ -1094,8 +1095,7 @@ vim.keymap.set('n', '<C-S-N>', function()
   harpoon:list():next()
 end)
 
-vim.keymap.set({ 'n', 'v' }, '<leader>gb', '<cmd>BlamerToggle<cr>', { noremap = true, silent = true })
-vim.keymap.set({ 'n', 'v' }, '<leader>st', '<cmd>SupermavenToggle<cr>', { noremap = true, silent = true })
+vim.keymap.set({ 'n', 'v' }, '<leader>gb', '<cmd>Gitsigns toggle_current_line_blame<cr>', { noremap = true, silent = true, desc = '[G]it [B]lame toggle' })
 
 vim.keymap.set('n', '<leader>yp', ':let @+ = expand("%:f")<CR>', { desc = 'Yank relative path' })
 vim.keymap.set('n', '<leader>yP', ':let @+ = expand("%:p")<CR>', { desc = 'Yank absolute path' })
