@@ -11,7 +11,7 @@ return {
   },
   {
     'windwp/nvim-ts-autotag',
-    ft = { 'html', 'javascript', 'typescript', 'javascriptreact', 'typescriptreact', 'svelte', 'vue', 'tsx', 'jsx', 'xml', 'php', 'markdown', 'astro', 'glimmer', 'handlebars', 'htmldjango', 'eruby', 'templ' },
+    ft = { 'html', 'markdown', 'xml' },
     opts = {},
   },
   {
