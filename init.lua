@@ -730,6 +730,7 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
+        'prettier', -- JS/TS/JSON formatter (used when project has a Prettier config)
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -780,19 +781,50 @@ require('lazy').setup({
           }
         end
       end,
-      formatters_by_ft = {
-        lua = { 'stylua' },
-        -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
-        --
-        -- You can use 'stop_after_first' to run the first available formatter from the list
-        php = { 'php_cs_fixer', stop_after_first = true },
-        javascript = { 'biome', 'biome-organize-imports' },
-        typescript = { 'biome', 'biome-organize-imports' },
-        javascriptreact = { 'biome', 'biome-organize-imports' },
-        typescriptreact = { 'biome', 'biome-organize-imports' },
-        json = { 'eslint_d' },
-      },
+      formatters_by_ft = (function()
+        -- Pick JS/TS formatters per-buffer: Prettier when the project
+        -- has a Prettier config, Biome when it has a Biome config.
+        -- Avoids Biome's default config silently reformatting Prettier projects.
+        local function js_formatters(bufnr)
+          local fname = vim.api.nvim_buf_get_name(bufnr)
+          local from = fname ~= '' and fname or vim.fn.getcwd()
+          local biome_cfg = vim.fs.find({ 'biome.json', 'biome.jsonc' }, { upward = true, path = from })[1]
+          local prettier_cfg = vim.fs.find({
+            '.prettierrc',
+            '.prettierrc.json',
+            '.prettierrc.js',
+            '.prettierrc.cjs',
+            '.prettierrc.mjs',
+            '.prettierrc.yaml',
+            '.prettierrc.yml',
+            '.prettierrc.toml',
+            'prettier.config.js',
+            'prettier.config.cjs',
+            'prettier.config.mjs',
+          }, { upward = true, path = from })[1]
+          if prettier_cfg and not biome_cfg then
+            return { 'prettier' }
+          end
+          if biome_cfg then
+            return { 'biome', 'biome-organize-imports' }
+          end
+          return { 'prettier' }
+        end
+
+        return {
+          lua = { 'stylua' },
+          -- Conform can also run multiple formatters sequentially
+          -- python = { "isort", "black" },
+          --
+          -- You can use 'stop_after_first' to run the first available formatter from the list
+          php = { 'php_cs_fixer', stop_after_first = true },
+          javascript = js_formatters,
+          typescript = js_formatters,
+          javascriptreact = js_formatters,
+          typescriptreact = js_formatters,
+          json = { 'prettier' },
+        }
+      end)(),
       formatters = {
         eslint_d = {
           -- Find the nearest package.json to determine the correct workspace
@@ -806,6 +838,25 @@ require('lazy').setup({
         },
         biome = {
           -- Find the nearest package.json to determine the correct workspace
+          cwd = function(self, ctx)
+            local root = vim.fs.find({ 'package.json' }, {
+              upward = true,
+              path = ctx.filename,
+            })[1]
+            return root and vim.fn.fnamemodify(root, ':h') or vim.fn.getcwd()
+          end,
+          -- Only run when a biome config is present in the project
+          require_cwd = false,
+          condition = function(self, ctx)
+            return vim.fs.find({ 'biome.json', 'biome.jsonc' }, {
+              upward = true,
+              path = ctx.filename,
+            })[1] ~= nil
+          end,
+        },
+        prettier = {
+          -- Run prettier from the nearest package.json so it picks up the
+          -- project's .prettierrc (this monorepo uses Prettier 3.x).
           cwd = function(self, ctx)
             local root = vim.fs.find({ 'package.json' }, {
               upward = true,
