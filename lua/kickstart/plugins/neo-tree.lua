@@ -13,10 +13,14 @@ end
 
 vim.pack.add(plugins)
 
-vim.keymap.set('n', '\\', '<Cmd>Neotree reveal<CR>', { desc = 'NeoTree reveal', silent = true })
+vim.keymap.set('n', '\\', '<Cmd>Neotree reveal right<CR>', { desc = 'NeoTree reveal right', silent = true })
 
 require('neo-tree').setup {
   filesystem = {
+    filtered_items = {
+      hide_gitignored = false,
+      hide_dotfiles = false,
+    },
     window = {
       mappings = {
         ['\\'] = 'close_window',
