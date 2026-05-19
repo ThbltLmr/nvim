@@ -228,6 +228,16 @@ do
   vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
   vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
+  -- Tab close
+  vim.keymap.set('n', '<leader>tc', '<cmd>tabclose<CR>', { desc = '[T]ab [C]lose' })
+
+  -- Yank current file path to the system clipboard
+  vim.keymap.set('n', '<leader>yp', ':let @+ = expand("%:f")<CR>', { desc = '[Y]ank relative [P]ath' })
+  vim.keymap.set('n', '<leader>yP', ':let @+ = expand("%:p")<CR>', { desc = '[Y]ank absolute [P]ath' })
+
+  -- Gitsigns blame toggle (configured by kickstart.plugins.gitsigns / section 3)
+  vim.keymap.set({ 'n', 'v' }, '<leader>gb', '<cmd>Gitsigns toggle_current_line_blame<cr>', { desc = '[G]it [B]lame toggle', silent = true })
+
   -- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
   -- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
   -- vim.keymap.set("n", "<C-S-l>", "<C-w>L", { desc = "Move window to the right" })
@@ -244,6 +254,13 @@ do
     desc = 'Highlight when yanking (copying) text',
     group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
     callback = function() vim.hl.on_yank() end,
+  })
+
+  -- PHP-specific abbreviation: insert `..` as `->`
+  vim.api.nvim_create_autocmd('FileType', {
+    desc = 'PHP-specific abbreviations',
+    pattern = 'php',
+    callback = function() vim.keymap.set('i', '..', '->', { buffer = true }) end,
   })
 end
 
@@ -686,16 +703,12 @@ do
   --  See `:help lsp-config` for information about keys and how to configure
   ---@type table<string, vim.lsp.Config>
   local servers = {
-    -- clangd = {},
-    -- gopls = {},
-    -- pyright = {},
-    -- rust_analyzer = {},
-    --
-    -- Some languages (like typescript) have entire language plugins that can be useful:
-    --    https://github.com/pmizio/typescript-tools.nvim
-    --
-    -- But for many setups, the LSP (`ts_ls`) will work just fine
-    -- ts_ls = {},
+    gopls = {},
+    rust_analyzer = {},
+    ts_ls = {},
+    cssls = {},
+    phpactor = {},
+    prismals = {},
 
     stylua = {}, -- Used to format Lua code
 
@@ -753,7 +766,9 @@ do
   -- You can press `g?` for help in this menu.
   local ensure_installed = vim.tbl_keys(servers or {})
   vim.list_extend(ensure_installed, {
-    -- You can add other tools here that you want Mason to install
+    'prettier', -- JS/TS/JSON formatter (used when project has a Prettier config)
+    'biome', -- alternative JS/TS formatter when project has biome.json
+    'php_cs_fixer', -- PHP formatter
   })
 
   require('mason-tool-installer').setup { ensure_installed = ensure_installed }
@@ -789,13 +804,62 @@ do
       lsp_format = 'fallback', -- Use external formatters if configured below, otherwise use LSP formatting. Set to `false` to disable LSP formatting entirely.
     },
     -- You can also specify external formatters in here.
-    formatters_by_ft = {
-      -- rust = { 'rustfmt' },
-      -- Conform can also run multiple formatters sequentially
-      -- python = { "isort", "black" },
-      --
-      -- You can use 'stop_after_first' to run the first available formatter from the list
-      -- javascript = { "prettierd", "prettier", stop_after_first = true },
+    formatters_by_ft = (function()
+      -- Pick JS/TS formatters per-buffer: Prettier when the project has a
+      -- Prettier config, Biome when it has a Biome config. Avoids Biome's
+      -- default config silently reformatting Prettier projects.
+      local function js_formatters(bufnr)
+        local fname = vim.api.nvim_buf_get_name(bufnr)
+        local from = fname ~= '' and fname or vim.fn.getcwd()
+        local biome_cfg = vim.fs.find({ 'biome.json', 'biome.jsonc' }, { upward = true, path = from })[1]
+        local prettier_cfg = vim.fs.find({
+          '.prettierrc',
+          '.prettierrc.json',
+          '.prettierrc.js',
+          '.prettierrc.cjs',
+          '.prettierrc.mjs',
+          '.prettierrc.yaml',
+          '.prettierrc.yml',
+          '.prettierrc.toml',
+          'prettier.config.js',
+          'prettier.config.cjs',
+          'prettier.config.mjs',
+        }, { upward = true, path = from })[1]
+        if prettier_cfg and not biome_cfg then return { 'prettier' } end
+        if biome_cfg then return { 'biome', 'biome-organize-imports' } end
+        return { 'prettier' }
+      end
+
+      return {
+        lua = { 'stylua' },
+        php = { 'php_cs_fixer', stop_after_first = true },
+        javascript = js_formatters,
+        typescript = js_formatters,
+        javascriptreact = js_formatters,
+        typescriptreact = js_formatters,
+        json = { 'prettier' },
+      }
+    end)(),
+    formatters = {
+      biome = {
+        cwd = function(self, ctx)
+          local root = vim.fs.find({ 'package.json' }, { upward = true, path = ctx.filename })[1]
+          return root and vim.fn.fnamemodify(root, ':h') or vim.fn.getcwd()
+        end,
+        require_cwd = false,
+        -- Only run when a biome config is present in the project
+        condition = function(self, ctx)
+          return vim.fs.find({ 'biome.json', 'biome.jsonc' }, { upward = true, path = ctx.filename })[1] ~= nil
+        end,
+      },
+      prettier = {
+        -- Run prettier from the nearest package.json so it picks up the
+        -- project's .prettierrc.
+        cwd = function(self, ctx)
+          local root = vim.fs.find({ 'package.json' }, { upward = true, path = ctx.filename })[1]
+          return root and vim.fn.fnamemodify(root, ':h') or vim.fn.getcwd()
+        end,
+      },
     },
   }
 
@@ -960,17 +1024,15 @@ do
   --  Here are some example plugins that I've included in the Kickstart repository.
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
-  -- require 'kickstart.plugins.debug'
-  -- require 'kickstart.plugins.indent_line'
-  -- require 'kickstart.plugins.lint'
-  -- require 'kickstart.plugins.autopairs'
-  -- require 'kickstart.plugins.neo-tree'
+  require 'kickstart.plugins.debug'
+  require 'kickstart.plugins.indent_line'
+  require 'kickstart.plugins.lint'
+  require 'kickstart.plugins.autopairs'
+  require 'kickstart.plugins.neo-tree'
   -- require 'kickstart.plugins.gitsigns' -- adds gitsigns recommended keymaps
 
   -- NOTE: You can add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
-  --
-  --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
-  -- require 'custom.plugins'
+  require 'custom.plugins'
 end
 
 -- The line beneath this is called `modeline`. See `:help modeline`
