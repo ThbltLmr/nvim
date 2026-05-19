@@ -768,7 +768,7 @@ do
   vim.list_extend(ensure_installed, {
     'prettier', -- JS/TS/JSON formatter (used when project has a Prettier config)
     'biome', -- alternative JS/TS formatter when project has biome.json
-    'php_cs_fixer', -- PHP formatter
+    'php-cs-fixer', -- PHP formatter (Mason name; conform calls it php_cs_fixer)
   })
 
   require('mason-tool-installer').setup { ensure_installed = ensure_installed }
