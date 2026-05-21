@@ -1,6 +1,5 @@
-vim.pack.add { 'https://github.com/iamcco/markdown-preview.nvim' }
-
--- Build hook: install the preview script after install/update.
+-- Register the build hook BEFORE vim.pack.add so it fires for the
+-- install event that vim.pack emits synchronously.
 vim.api.nvim_create_autocmd('PackChanged', {
   callback = function(ev)
     if ev.data.spec.name ~= 'markdown-preview.nvim' then return end
@@ -9,6 +8,16 @@ vim.api.nvim_create_autocmd('PackChanged', {
     pcall(vim.fn['mkdp#util#install'])
   end,
 })
+
+vim.pack.add { 'https://github.com/iamcco/markdown-preview.nvim' }
+
+-- Heal an unbuilt install (e.g. previous run where the hook didn't fire):
+-- if the server binary is missing, build it now.
+local plugin_root = vim.fn.stdpath 'data' .. '/site/pack/core/opt/markdown-preview.nvim'
+if vim.fn.isdirectory(plugin_root .. '/app/bin') == 0 then
+  vim.cmd.packadd 'markdown-preview.nvim'
+  pcall(vim.fn['mkdp#util#install'])
+end
 
 vim.g.mkdp_browser = ''
 
