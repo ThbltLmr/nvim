@@ -42,6 +42,7 @@ require('mason-nvim-dap').setup {
   ensure_installed = {
     -- Update this to ensure that you have the debuggers for the langs you want
     'delve',
+    'js', -- installs js-debug-adapter (vscode-js-debug) for Node debugging
   },
 }
 
@@ -93,3 +94,56 @@ require('dap-go').setup {
     detached = vim.fn.has 'win32' == 0,
   },
 }
+
+-- Node / JavaScript / TypeScript debugging (via js-debug-adapter, installed by Mason above).
+-- NOTE: this targets Node. Bun is NOT supported here — it speaks the WebKit inspector
+-- protocol, not the V8/CDP protocol that js-debug-adapter uses. For Bun, use `bun --inspect`.
+if not dap.adapters['pwa-node'] then
+  dap.adapters['pwa-node'] = {
+    type = 'server',
+    host = 'localhost',
+    port = '${port}',
+    executable = {
+      -- `js-debug-adapter` is put on Neovim's PATH by Mason.
+      command = 'js-debug-adapter',
+      args = { '${port}' },
+    },
+  }
+end
+
+for _, language in ipairs { 'javascript', 'typescript', 'javascriptreact', 'typescriptreact' } do
+  dap.configurations[language] = {
+    {
+      type = 'pwa-node',
+      request = 'launch',
+      name = 'Launch current file (Node)',
+      program = '${file}',
+      cwd = '${workspaceFolder}',
+      sourceMaps = true,
+      protocol = 'inspector',
+    },
+    {
+      type = 'pwa-node',
+      request = 'launch',
+      name = 'Launch via npm script (prompts for script name)',
+      runtimeExecutable = 'npm',
+      -- A function value is evaluated by nvim-dap when the config is launched,
+      -- so this prompts you for the script (e.g. `dev`, `start`) each time.
+      runtimeArgs = function()
+        return { 'run', vim.fn.input 'npm script: ' }
+      end,
+      cwd = '${workspaceFolder}',
+      sourceMaps = true,
+      protocol = 'inspector',
+      console = 'integratedTerminal',
+    },
+    {
+      type = 'pwa-node',
+      request = 'attach',
+      name = 'Attach to running Node process',
+      processId = require('dap.utils').pick_process,
+      cwd = '${workspaceFolder}',
+      sourceMaps = true,
+    },
+  }
+end
