@@ -9,6 +9,12 @@ vim.pack.add {
 require('diffview').setup {}
 require('octo').setup {
   picker = 'telescope', -- reuse your existing Telescope picker
+  -- Map SSH host aliases (~/.ssh/config) back to the real host so `gh` finds the account.
+  -- octo escapes hyphens internally, so keys are the literal alias names.
+  ssh_aliases = {
+    ['github-hublo'] = 'github.com',
+    ['github-biogroup'] = 'github.com',
+  },
 }
 
 -- which-key group label for <leader>o
