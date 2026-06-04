@@ -41,3 +41,27 @@ map('<leader>oC', '<cmd>Octo comment delete<cr>', 'Comment: delete')
 
 -- Issues
 map('<leader>oi', '<cmd>Octo issue list<cr>', 'Issue list')
+
+-- ─── Project-specific keymaps ──────────────────────────────────────────────
+-- Open PRs authored by my team. GitHub search OR's multiple `author:` qualifiers,
+-- so this returns PRs opened by ANY of them. Built as a static search (results
+-- shown immediately, no need to type in the prompt) and scoped to the current repo.
+local team = {
+  'constantgayethublo',
+  'ThbltLmrHublo', -- me
+  'florent-guille-hublo',
+  'louis-grs',
+  'vincianelhuissier-ext-lab',
+}
+
+local function team_open_prs()
+  local query = 'is:pr is:open'
+  local ok, repo = pcall(require('octo.utils').get_remote_name) -- "owner/name" of current repo
+  if ok and repo and repo ~= '' then query = query .. ' repo:' .. repo end
+  for _, user in ipairs(team) do
+    query = query .. ' author:' .. user
+  end
+  require('octo.picker').search { prompt = query, static = true }
+end
+
+map('<leader>ot', team_open_prs, 'PRs: open, by my team')
