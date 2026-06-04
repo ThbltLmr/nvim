@@ -232,6 +232,9 @@ do
   -- Tab close
   vim.keymap.set('n', '<leader>tc', '<cmd>tabclose<CR>', { desc = '[T]ab [C]lose' })
 
+  -- Tab open
+  vim.keymap.set('n', '<leader>to', '<cmd>tabnew<CR>', { desc = '[T]ab [O]pen' })
+
   -- Yank current file path to the system clipboard
   vim.keymap.set('n', '<leader>yp', ':let @+ = expand("%:f")<CR>', { desc = '[Y]ank relative [P]ath' })
   vim.keymap.set('n', '<leader>yP', ':let @+ = expand("%:p")<CR>', { desc = '[Y]ank absolute [P]ath' })
