@@ -34,6 +34,7 @@ map('<leader>or', '<cmd>Octo review start<cr>', 'Review: start')
 map('<leader>oe', '<cmd>Octo review resume<cr>', 'Review: resume')
 map('<leader>oR', '<cmd>Octo review submit<cr>', 'Review: submit')
 map('<leader>ox', '<cmd>Octo review discard<cr>', 'Review: discard')
+map('<leader>oT', '<cmd>Octo review thread<cr>', 'Review: open thread under cursor')
 
 -- Comments / threads
 map('<leader>oc', '<cmd>Octo comment add<cr>', 'Comment: add')
