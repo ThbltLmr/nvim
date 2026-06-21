@@ -33,6 +33,7 @@ map('<leader>ob', '<cmd>Octo pr browser<cr>', 'Open PR in browser')
 map('<leader>or', '<cmd>Octo review start<cr>', 'Review: start')
 map('<leader>oe', '<cmd>Octo review resume<cr>', 'Review: resume')
 map('<leader>oR', '<cmd>Octo review submit<cr>', 'Review: submit')
+map('<leader>om', '<cmd>Octo review commit<cr>', 'Review: pick commit to review')
 map('<leader>ox', '<cmd>Octo review discard<cr>', 'Review: discard')
 map('<leader>oT', '<cmd>Octo review thread<cr>', 'Review: open thread under cursor')
 
