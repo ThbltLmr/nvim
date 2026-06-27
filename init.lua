@@ -721,6 +721,7 @@ do
     cssls = {},
     phpactor = {},
     prismals = {},
+    basedpyright = {}, -- Python LSP (completion, types) — used by .py files incl. leetcode.nvim buffers
 
     stylua = {}, -- Used to format Lua code
 
