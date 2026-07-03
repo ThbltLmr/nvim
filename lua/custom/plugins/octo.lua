@@ -56,6 +56,9 @@ local team = {
   'vincianelhuissier-ext-lab',
   'alice-rey-h',
   'gatientirel-hublo',
+  'julien-rault-ext-bit',
+  'marek-e',
+  'adechassey-hublo',
 }
 
 local function team_open_prs()
