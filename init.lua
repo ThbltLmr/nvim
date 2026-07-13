@@ -711,6 +711,18 @@ do
     end,
   })
 
+  -- Walk up from a file to the nearest worktree root that has native TypeScript
+  -- (TS 7 / tsgo) installed as `@typescript/native`. Returns nil when absent, so
+  -- callers fall back to `ts_ls`. This is per-root, so it works for ANY worktree
+  -- of a repo that adopts native TS — no per-worktree config needed.
+  local function tsgo_root(fname)
+    if fname == '' then return nil end
+    for dir in vim.fs.parents(fname) do
+      if vim.uv.fs_stat(dir .. '/node_modules/@typescript/native/bin/tsc') then return dir end
+    end
+    return nil
+  end
+
   -- Enable the following language servers
   --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
   --  See `:help lsp-config` for information about keys and how to configure
@@ -718,7 +730,16 @@ do
   local servers = {
     gopls = {},
     rust_analyzer = {},
-    ts_ls = {},
+    -- ts_ls: classic tsserver (bundled TS). Skips projects using native TS 7,
+    -- which are served by `tsgo` (registered after the loop below) instead.
+    ts_ls = {
+      root_dir = function(bufnr, on_dir)
+        local fname = vim.api.nvim_buf_get_name(bufnr)
+        if tsgo_root(fname) then return end -- defer to native TS 7 (tsgo)
+        local root = vim.fs.root(fname, { 'tsconfig.json', 'jsconfig.json', 'package.json', '.git' })
+        if root then on_dir(root) end
+      end,
+    },
     cssls = {},
     phpactor = {},
     prismals = {},
@@ -791,6 +812,24 @@ do
     vim.lsp.config(name, server)
     vim.lsp.enable(name)
   end
+
+  -- Native TypeScript 7 (tsgo / @typescript/native). Registered outside the loop
+  -- above because it is NOT a Mason package — it ships in the project's own
+  -- node_modules. It attaches only in worktrees that install `@typescript/native`
+  -- (see tsgo_root), so any worktree of such a repo gets true TS 7 diagnostics
+  -- while every other project stays on ts_ls.
+  vim.lsp.config('tsgo', {
+    filetypes = { 'typescript', 'typescriptreact', 'javascript', 'javascriptreact' },
+    root_dir = function(bufnr, on_dir)
+      local root = tsgo_root(vim.api.nvim_buf_get_name(bufnr))
+      if root then on_dir(root) end
+    end,
+    cmd = function(dispatchers, config)
+      local bin = config.root_dir .. '/node_modules/@typescript/native/bin/tsc'
+      return vim.lsp.rpc.start({ 'node', bin, '--lsp', '--stdio' }, dispatchers)
+    end,
+  })
+  vim.lsp.enable 'tsgo'
 end
 
 -- ============================================================
