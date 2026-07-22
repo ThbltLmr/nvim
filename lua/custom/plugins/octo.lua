@@ -59,6 +59,7 @@ local team = {
   'julien-rault-ext-bit',
   'marek-e',
   'adechassey-hublo',
+  'zoegarbal-hublo',
 }
 
 local function team_open_prs()
