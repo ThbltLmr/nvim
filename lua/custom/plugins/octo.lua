@@ -1,6 +1,6 @@
 -- octo.nvim — GitHub issues / PRs / reviews inside Neovim (needs the `gh` CLI, authenticated).
 -- diffview.nvim powers the changed-files panel during a review.
--- Deps (plenary, telescope, nvim-web-devicons) are already installed in init.lua.
+-- Deps (plenary and telescope) are already installed in init.lua; MiniIcons provides the devicons compatibility layer.
 vim.pack.add {
   'https://github.com/sindrets/diffview.nvim',
   'https://github.com/pwntester/octo.nvim',

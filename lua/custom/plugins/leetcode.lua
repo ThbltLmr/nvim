@@ -1,6 +1,6 @@
 -- leetcode.nvim — solve LeetCode problems inside Neovim.
 -- Deps already installed elsewhere: telescope + plenary (init.lua §4),
--- nvim-web-devicons (init.lua), html treesitter parser (init.lua parsers list),
+-- MiniIcons' devicons compatibility layer (init.lua), html treesitter parser (init.lua parsers list),
 -- and nui.nvim (added by custom/plugins/hardtime.lua). nui is re-listed here so
 -- this file stands on its own — vim.pack dedupes identical sources.
 vim.pack.add {
